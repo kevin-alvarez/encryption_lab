@@ -5,6 +5,7 @@ all:
 	@echo "Please use make commands only"
 
 compile:
+	mkdir build
 	javac $(src)classes/*.java -d $(build)
 	javac $(src)Main.java -d $(build) -cp $(build)
 
