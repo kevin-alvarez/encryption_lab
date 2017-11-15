@@ -1,8 +1,8 @@
-import classes.Encrypter;
+import models.Encrypter;
+import views.MainView;
 
 public class Main{
   public static void main(String[] args){
-    Encrypter enc = new Encrypter();
-    enc.sayHello();
+    MainView mv = new MainView();
   }
 }
