@@ -1,5 +1,10 @@
 package models;
 
+import java.io.UnsupportedEncodingException;
+import java.io.FileNotFoundException;
+import java.lang.InterruptedException;
+import java.util.concurrent.ExecutionException;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ExecutorService;
@@ -41,21 +46,55 @@ public class Encrypter{
   }
 
   public Encrypter(){
-    key = 155;
+    key = 52;
   }
 
   private int key;
+  private int[] keys;
 
-  public void beginEncryption(String plainText, int blockSize, int iterations) throws java.io.IOException, java.lang.InterruptedException, java.util.concurrent.ExecutionException {
-    int[] keys = createKeys(key, iterations);
-    byte[] textBinary = plainText.getBytes("UTF-8");
+  public int[][] begin(String plainText, int blockSize, int iterations) {
+    keys = createKeys(key, iterations);
+    byte[] textBinary = null;
+    try {
+      textBinary = plainText.getBytes("UTF-8");
+    } catch(UnsupportedEncodingException ex) {}
     int[][] blocks = createBlocks(textBinary, blockSize);
-    encrypt(blocks, keys);
-    byte[] encryptedText = joinBlocks(blocks, blockSize);
-    String encryptedMessage = new String(encryptedText, "UTF-8"); // Mensaje Encriptado
-    decrypt(blocks, keys);
-    byte[] decodedTextBinary = joinBlocks(blocks, blockSize);
-    String decodedText = new String(decodedTextBinary, "UTF-8"); // Mensaje Desencriptado
+    return blocks;
+  }
+
+  public int[][] encrypt(int[][] blocks) {
+    ExecutorService threadPool = Executors.newFixedThreadPool(blocks.length);
+    for (int i = 0; i < blocks.length; i++) {
+      Callable<int[]> process = new BlockEncryptor(blocks[i], keys);
+      Future<int[]> result = threadPool.submit(process);
+      try {
+        blocks[i] = result.get();
+      } catch(InterruptedException|ExecutionException ex) {}
+    }
+    threadPool.shutdown();
+    return blocks;
+  }
+
+  public int[][] decrypt(int[][] blocks) {
+    ExecutorService threadPool = Executors.newFixedThreadPool(blocks.length);
+    for (int i = 0; i < blocks.length; i++) {
+      Callable<int[]> process = new BlockDecryptor(blocks[i], keys);
+      Future<int[]> result = threadPool.submit(process);
+      try {
+        blocks[i] = result.get();
+      } catch(InterruptedException|ExecutionException ex) {}
+    }
+    threadPool.shutdown();
+    return blocks;
+  }
+
+  public String createString(int[][] blocks, int blockSize) {
+    byte[] byteArray = joinBlocks(blocks, blockSize);
+    String newString = null;
+    try {
+      newString = new String(byteArray, "UTF-8");
+    } catch(UnsupportedEncodingException ex) {}
+    return newString;
   }
 
   private int[] createKeys(int key, int iterations) {
@@ -83,16 +122,6 @@ public class Encrypter{
       i++;
     }
     return blocks;
-  }
-
-  private void encrypt(int[][] blocks, int[] keys) throws java.lang.InterruptedException, java.util.concurrent.ExecutionException {
-    ExecutorService threadPool = Executors.newFixedThreadPool(blocks.length);
-    for (int i = 0; i < blocks.length; i++) {
-      Callable<int[]> process = new BlockEncryptor(blocks[i], keys);
-      Future<int[]> result = threadPool.submit(process);
-      blocks[i] = result.get();
-    }
-    threadPool.shutdown();
   }
 
   private int[] encryptBlock(int[] block, int[] keys) {
@@ -128,16 +157,6 @@ public class Encrypter{
       block[i] = right[i - block.length / 2];
     }
     return block;
-  }
-
-  private void decrypt(int[][] blocks, int[] keys) throws java.lang.InterruptedException, java.util.concurrent.ExecutionException {
-    ExecutorService threadPool = Executors.newFixedThreadPool(blocks.length);
-    for (int i = 0; i < blocks.length; i++) {
-      Callable<int[]> process = new BlockDecryptor(blocks[i], keys);
-      Future<int[]> result = threadPool.submit(process);
-      blocks[i] = result.get();
-    }
-    threadPool.shutdown();
   }
 
   private int[] decryptBlock(int[] block, int[] keys) {
