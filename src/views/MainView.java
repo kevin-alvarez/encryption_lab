@@ -24,7 +24,7 @@ public class MainView extends JFrame implements ActionListener{
   private JButton decryptButton;
   private JLabel encryptedText;
   private JLabel decryptedText;
-  private String[] blockSizes = {"8", "16", "32", "64", "128", "256", "512"};
+  private String[] blockSizes = {"16", "32", "64", "128", "256", "512"};
 
   public MainView(Encrypter encrypter){
     this.encrypter = encrypter;
@@ -48,7 +48,7 @@ public class MainView extends JFrame implements ActionListener{
     JLabel lblEncrypt = new JLabel("Encrypted text: ");
     JLabel lblDecrypt = new JLabel("Decrypted text: ");
     this.plainTextField = new JTextField();
-    this.iterationTextField = new JTextField();
+    this.iterationTextField = new JTextField("16");
     this.blockSizeCB = new JComboBox(this.blockSizes);
     this.encryptedText = new JLabel();
     this.encryptedText.setBorder(new LineBorder(Color.GRAY));
