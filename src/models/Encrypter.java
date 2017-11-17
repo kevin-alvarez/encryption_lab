@@ -1,5 +1,7 @@
 package models;
 
+import java.lang.Math;
+
 import java.io.UnsupportedEncodingException;
 import java.io.FileNotFoundException;
 import java.lang.InterruptedException;
@@ -46,7 +48,7 @@ public class Encrypter{
   }
 
   public Encrypter(){
-    key = 52;
+    key = (int)(Math.random() * 254) + 1;
   }
 
   private int key;
