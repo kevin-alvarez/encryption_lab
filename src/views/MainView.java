@@ -3,11 +3,9 @@ package views;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.LineBorder;
-
-import javafx.scene.paint.Color;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Color;
 import models.Encrypter;
 
 public class MainView extends JFrame implements ActionListener{
@@ -53,9 +51,9 @@ public class MainView extends JFrame implements ActionListener{
     this.iterationTextField = new JTextField();
     this.blockSizeCB = new JComboBox(this.blockSizes);
     this.encryptedText = new JLabel();
-    this.encryptedText.setBorder(new LineBorder(java.awt.Color.GRAY));
+    this.encryptedText.setBorder(new LineBorder(Color.GRAY));
     this.decryptedText = new JLabel();
-    this.decryptedText.setBorder(new LineBorder(java.awt.Color.GRAY));
+    this.decryptedText.setBorder(new LineBorder(Color.GRAY));
 
     GroupLayout layout = new GroupLayout(this.getContentPane());
     this.getContentPane().setLayout(layout);
