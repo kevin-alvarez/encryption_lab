@@ -47,14 +47,13 @@ public class Encrypter{
     }
   }
 
-  public Encrypter(){
-    key = (int)(Math.random() * 254) + 1;
-  }
+  public Encrypter(){}
 
   private int key;
   private int[] keys;
 
   public int[][] begin(String plainText, int blockSize, int iterations) {
+    key = (int)(Math.random() * 254) + 1;
     keys = createKeys(key, iterations);
     byte[] textBinary = null;
     try {
@@ -103,7 +102,7 @@ public class Encrypter{
     int[] keys = new int[iterations];
     keys[0] = key;
     for (int i = 1; i < iterations; i++) {
-      key = (key + (key / 2) ^ 2) % 256; // Modificar esto.
+      key = (key + (key / 2) ^ 2) % 256;
       keys[i] = key;
     }
     return keys;
@@ -138,7 +137,7 @@ public class Encrypter{
     }
     i = 0;
     int j;
-    while (i < keys.length) { // hay que cambiar algo aquí
+    while (i < keys.length) {
       int[] rightXOR = new int[right.length];
       System.arraycopy(right, 0, rightXOR, 0, right.length);
       int[] newRight = new int[right.length];
@@ -173,7 +172,7 @@ public class Encrypter{
     }
     i = 0;
     int j;
-    while (i < keys.length) { // hay que cambiar algo aquí
+    while (i < keys.length) {
       int[] leftXOR = new int[left.length];
       System.arraycopy(left, 0, leftXOR, 0, left.length);
       int[] newLeft = new int[left.length];
